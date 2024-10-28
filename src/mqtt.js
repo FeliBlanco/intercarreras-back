@@ -6,7 +6,7 @@ client.on("connect", () => {
   console.log("Connected");
   client.subscribe("temperatura", (err) => {
     if (!err) {
-      client.publish("update", "Hello mqtt");
+      client.publish("actualizar", "Hello mqtt");
     } else {
         console.log(err)
     }
@@ -31,4 +31,12 @@ client.on("message", (topic, message) => {
   console.log(message.toString());
 });
 
-module.exports = client
+function sendMQTTMessage(topic, message) {
+  if(client) {
+    client.publish(topic, message);
+  }
+}
+
+module.exports = {
+  sendMQTTMessage
+}

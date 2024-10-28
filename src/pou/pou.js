@@ -17,13 +17,14 @@ const POU_ESTADOS = {
     FELIZ: 4,
     TRISTE: 5,
     ENOJADO: 6,
-    MUERTO: 7
+    SED:8,
+    MUERTO: 8
 };
 
 const POU_ESTADOS_NOMBRE = [
     "",
     "normal",
-    "sueño",
+    "durmiendo",
     "cansado",
     "feliz",
     "triste",
@@ -72,62 +73,64 @@ class Pou {
         let estado = POU_ESTADOS.NORMAL;
 
 
-        //sensacion frio y calor
-        if(ambiente.temperatura >= 35 && this.state.calor == false) {
-            this.state.calor = true;
-            if(this.state.frio == true) this.state.frio = false;
-        } else if(ambiente.temperatura <= 14 && this.state.frio == false) {
-            this.state.frio = true;
-            if(this.state.calor == true) this.state.calor = false;
-        } else if(this.state.calor == true || this.state.frio == true){
-            this.state.calor = false;
-            this.state.frio = false;
-        }
-
-        //cansancio
-
-        if(this.state.energia < 40 && this.state.cansado == false) {
-            this.state.cansado = true;
-        } else if(this.state.cansado == true) {
-            this.state.cansado = false;
-        }
-
-        if(this.state.energia < 30 && this.state.durmiendo == false && this.state.sueno < 100) {
-            this.state.sueno += 3;
-        }
-
-        //
-
-        if(this.state.durmiendo == false) {
-            this.state.sueno ++;
-            this.state.energia --;
-
-            if(this.state.alimentandose == true) {
-                if(this.state.calor == true) this.state.sed += 1.3;
-                else this.state.sed += 0.8;
-            } else {
-                if(this.state.calor == true) this.state.sed += 0.9;
-                else this.state.sed += 0.6;
-            }
-
-            if(this.state.alimentandose == false) {
-                if(this.state.frio == true) this.state.hambre += 1.8;
-                else this.state.hambre += 1.2;
-            }
-        } else {
-            if(this.state.alimentandose == true) this.state.sed += 0.5;
-            else this.state.sed += 0.3;
-            if(this.state.alimentandose == false) this.state.hambre += 0.4;
-            this.state.energia ++;
-            this.state.sueno --;
-        }
-
         if(this.state.muerto == false) {
+            //sensacion frio y calor
+            if(ambiente.temperatura >= 35 && this.state.calor == false) {
+                this.state.calor = true;
+                if(this.state.frio == true) this.state.frio = false;
+            } else if(ambiente.temperatura <= 14 && this.state.frio == false) {
+                this.state.frio = true;
+                if(this.state.calor == true) this.state.calor = false;
+            } else if(this.state.calor == true || this.state.frio == true){
+                this.state.calor = false;
+                this.state.frio = false;
+            }
+
+            //cansancio
+
+            if(this.state.energia < 40 && this.state.cansado == false) {
+                this.state.cansado = true;
+            } else if(this.state.cansado == true) {
+                this.state.cansado = false;
+            }
+
+            if(this.state.energia < 30 && this.state.durmiendo == false && this.state.sueno < 100) {
+                this.state.sueno += 3;
+            }
+
+            //
+
+            if(this.state.durmiendo == false) {
+                this.state.sueno ++;
+                this.state.energia --;
+    
+                if(this.state.alimentandose == true) {
+                    if(this.state.calor == true) this.state.sed += 1.3;
+                    else this.state.sed += 0.8;
+                } else {
+                    if(this.state.calor == true) this.state.sed += 0.9;
+                    else this.state.sed += 0.6;
+                }
+    
+                if(this.state.alimentandose == false) {
+                    if(this.state.frio == true) this.state.hambre += 1.8;
+                    else this.state.hambre += 1.2;
+                }
+            } else {
+                if(this.state.alimentandose == true) this.state.sed += 0.5;
+                else this.state.sed += 0.3;
+                if(this.state.alimentandose == false) this.state.hambre += 0.4;
+                this.state.energia ++;
+                this.state.sueno --;
+            }
+    
             if(this.state.sed >= 100 && this.state.hambre >= 100) {
                 this.state.moribundo ++;
                 if(this.state.moribundo >= 30) {
                     this.state.muerto = true;
                 }
+            } else if(this.state.moribundo > 0) {
+                this.state.moribundo --;
             }
         }
 
@@ -206,8 +209,7 @@ class Pou {
         this.state.cansado = tired;
     }
 
-
-    estaDurmiendo() {
+    isBed() {
         return this.state.durmiendo;
     }
 
@@ -217,6 +219,13 @@ class Pou {
 
     getStates() {
         return {...this.state, state_name: POU_ESTADOS_NOMBRE[this.state.estado]};
+    }
+
+    revivir() {
+        this.state.muerto = false;
+        this.state.sed = 0;
+        this.state.hambre = 0;
+        this.state.energia = 80;
     }
 
     async hablarle(texto) {

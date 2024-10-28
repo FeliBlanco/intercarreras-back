@@ -35,6 +35,17 @@ router.post('/hablarle', async (req, res) => {
     }
 })
 
+router.post('/revivir', (req, res) => {
+    try {
+        console.log('REVIVIR')
+        pou.revivir()
+        res.send()
+    }
+    catch(err) {
+        res.status(503).send()
+    }
+})
+
 router.post('/dormir', (req, res) => {
     try {
         console.log('DORMIR')
