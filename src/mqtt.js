@@ -1,4 +1,5 @@
 const mqtt = require("mqtt");
+const { cambiarAmbiente } = require("./pou/pou");
 
 const client = mqtt.connect('http://broker.emqx.io');
 
@@ -14,21 +15,19 @@ client.on("connect", () => {
 });
 
 client.on("message", (topic, message) => {
-  switch(topic) {
-    case "cambiar_temperatura": {
-      
-      break;
+  try {
+    switch(topic) {
+      case "temperatura": {
+        const decode = JSON.parse(message);
+        cambiarAmbiente("temperatura", decode.temperatura)
+        console.log("CAMBIAR TMP")
+        break;
+      }
     }
   }
-  console.log(topic)
-  try {
-    const json_decode = JSON.parse(message);
-    console.log(json_decode)
-  }
   catch(err) {
-    console.log("ERROR AL LEER JSON")
+    console.log(err)
   }
-  console.log(message.toString());
 });
 
 function sendMQTTMessage(topic, message) {

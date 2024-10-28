@@ -30,7 +30,7 @@ const POU_ESTADOS_NOMBRE = [
     "triste",
     "enojado",
     "sed",
-    "dormido"
+    "muerto"
 ]
 
 const POU_ENFERMEDADES = {
@@ -42,6 +42,13 @@ let ambiente = {
     temperatura: 20,
     humedad: 20
 };
+
+function cambiarAmbiente(key, valor) {
+    if(ambiente[key]) {
+        ambiente[key] = valor;
+    }
+
+}
 
 class Pou {
     constructor() {
@@ -67,6 +74,11 @@ class Pou {
     }
 
     getStateName() {
+        return POU_ESTADOS_NOMBRE[this.state.estado];
+    }
+    getStateNameEx() {
+        if(this.state.alimentandose == true) return "alimentandose";
+        if(this.state.bebiendo == true) return "bebiendo";
         return POU_ESTADOS_NOMBRE[this.state.estado];
     }
 
@@ -106,7 +118,7 @@ class Pou {
                 if(ambiente.humedad > 45) {
                     this.state.energia -= 1.3;
                 } else this.state.energia --;
-                
+
                 if(this.state.sueno >= 50) {
                     this.state.salud -= 0.5;
                 }
@@ -257,4 +269,7 @@ Object.defineProperty(Pou, 'STATES', {
     writable: false,
 });
 
-module.exports = Pou;
+module.exports = {
+    cambiarAmbiente,
+    Pou
+};
