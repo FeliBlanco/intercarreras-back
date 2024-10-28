@@ -2,6 +2,7 @@ const Pou = require('./pou/pou')
 const { Router } = require('express')
 const { getIO } = require('./socket')
 const DataModel = require('./schemes/data')
+const { sendMQTTMessage } = require('./mqtt')
 
 
 const router = Router()
@@ -94,6 +95,7 @@ router.post('/comer', (req, res) => {
 setInterval(() => {
     pou.cambiarEstado()
     //console.log(`Estado del pou: `, pou.getStateName())
+    sendMQTTMessage("actualizar", pou.getStateName())
     const socket = getIO();
     if(socket) {
         socket.emit('estado', pou.getStates())
