@@ -1,17 +1,12 @@
 const mqtt = require("mqtt");
 
-const client = mqtt.connect({
-    port: 8883,
-    host: '748e26d3a6294ca0a7d11cf94a6c8002.s1.eu.hivemq.cloud',
-    protocol: 'mqtts',
-    username: 'Maximo',
-    password: 'Mascota2024'
-});
+const client = mqtt.connect('http://broker.emqx.io');
 
 client.on("connect", () => {
-  client.subscribe("hola", (err) => {
+  console.log("Connected");
+  client.subscribe("temperatura", (err) => {
     if (!err) {
-      client.publish("hola", "Hello mqtt");
+      client.publish("update", "Hello mqtt");
     } else {
         console.log(err)
     }
