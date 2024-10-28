@@ -39,7 +39,8 @@ const POU_ENFERMEDADES = {
 }
 
 let ambiente = {
-    temperatura: 20
+    temperatura: 20,
+    humedad: 20
 };
 
 class Pou {
@@ -60,8 +61,8 @@ class Pou {
             durmiendo: false,
             alimentandose: false,
             bebiendo: false,
-            moribundo: 0,
-            muerto: false
+            muerto: false,
+            salud: 100
         }
     }
 
@@ -102,7 +103,13 @@ class Pou {
 
             if(this.state.durmiendo == false) {
                 this.state.sueno ++;
-                this.state.energia --;
+                if(ambiente.humedad > 45) {
+                    this.state.energia -= 1.3;
+                } else this.state.energia --;
+                
+                if(this.state.sueno >= 50) {
+                    this.state.salud -= 0.5;
+                }
     
                 if(this.state.alimentandose == true) {
                     if(this.state.calor == true) this.state.sed += 1.3;
@@ -123,17 +130,15 @@ class Pou {
                 this.state.energia ++;
                 this.state.sueno --;
             }
-    
-            if(this.state.sed >= 100 && this.state.hambre >= 100) {
-                this.state.moribundo ++;
-                if(this.state.moribundo >= 30) {
-                    this.state.muerto = true;
-                }
-            } else if(this.state.moribundo > 0) {
-                this.state.moribundo --;
-            }
-        }
 
+            if(this.state.sed >= 100) this.state.salud -= 3;
+            if(this.state.hambre >= 100) this.state.salud -= 3;
+    
+        }
+        
+        if(this.state.salud <= 0 && this.state.muerto == false) {
+            this.state.muerto = true;
+        }
 
         if(this.state.sed > 100) this.state.sed = 100;
         if(this.state.sed < 0) this.state.sed = 0;
@@ -143,6 +148,8 @@ class Pou {
         if(this.state.sueno > 100) this.state.sueno = 100;
         if(this.state.energia < 0) this.state.energia = 0;
         if(this.state.energia > 100) this.state.energia = 100;
+        if(this.state.salud < 0) this.state.salud = 0;
+        if(this.state.salud > 100) this.state.salud = 100;
 
         if(this.state.calor == true || this.state.frio == true || this.state.sed > 60 || this.state.hambre > 40) {
             estado = POU_ESTADOS.ENOJADO;
